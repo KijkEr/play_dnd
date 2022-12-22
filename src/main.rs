@@ -9,16 +9,10 @@ async fn main() -> Result<(), sqlx::Error> {
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let db = DBApplication::new(database_url).await?;
 
-    let character = db.get_character().await?;
+    let player_character = db.build_character().await;
 
-    println!(
-        "{} is een level {} {} {} {}",
-        character.character_name,
-        character.level,
-        character.race,
-        character.class,
-        character.sub_class
-    );
+    let weapon = player_character.weapon;
+    let character = player_character.character;
 
     Ok(())
 }

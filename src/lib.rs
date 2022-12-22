@@ -13,7 +13,6 @@ pub struct Character {
     pub class: String,
     pub sub_class: String,
 }
-
 pub struct Weapon {
     pub weapon_name: String,
     pub weapon_type: String,
@@ -23,10 +22,9 @@ pub struct Weapon {
     pub damage_type: String,
     pub quality: String,
 }
-
 pub struct PlayerCharacter {
-    character: Character,
-    weapon: Weapon,
+    pub character: Character,
+    pub weapon: Weapon,
 }
 
 impl DBApplication {
@@ -37,7 +35,7 @@ impl DBApplication {
             .await?;
         Ok(DBApplication { pool })
     }
-    pub async fn get_character(&self) -> Result<Character, sqlx::Error> {
+    async fn get_character(&self) -> Result<Character, sqlx::Error> {
         let mut transaction = self.pool.begin().await?;
         let character = sqlx::query_file_as!(Character, "./queries/character.sql")
             .fetch_one(&mut transaction)
@@ -45,20 +43,20 @@ impl DBApplication {
         transaction.commit().await?;
         Ok(character)
     }
-    pub async fn get_weapon(&self) -> Result<Weapon, sqlx::Error> {
+    async fn get_weapon(&self) -> Result<Weapon, sqlx::Error> {
         let mut transaction = self.pool.begin().await?;
-        let character = sqlx::query_file_as!(Weapon, "./queries/weapon.sql")
+        let weapon = sqlx::query_file_as!(Weapon, "./queries/weapon.sql")
             .fetch_one(&mut transaction)
             .await?;
         transaction.commit().await?;
-        Ok(character)
+        Ok(weapon)
     }
     pub async fn build_character(&self) -> PlayerCharacter {
-        player = self.get_character();
-        weapon = self.get_weapon();
+        let player = self.get_character().await;
+        let weapon = self.get_weapon().await;
         PlayerCharacter {
-            character: player,
-            weapon: weapon,
+            character: player.unwrap(),
+            weapon: weapon.unwrap(),
         }
     }
 }
