@@ -3,6 +3,7 @@ select
     "level" as "level!",
     "race" as "race!",
     "class" as "class!",
-    "sub_class" as "sub_class!"
+    "sub_class" as "sub_class!",
+    "proficiency" as "proficiency!"
 from
-    "characters"
+    "v_characters"

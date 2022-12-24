@@ -1,7 +1,5 @@
 use dotenv::dotenv;
-use play_dnd::DBApplication;
-
-// #[derive(sqlx::FromRow, Debug)]
+use play_dnd::{Combat, DBApplication};
 
 #[tokio::main]
 async fn main() -> Result<(), sqlx::Error> {
@@ -11,8 +9,13 @@ async fn main() -> Result<(), sqlx::Error> {
 
     let player_character = db.build_character().await;
 
-    let weapon = player_character.weapon;
-    let character = player_character.character;
+    let combat = Combat::new(
+        player_character.weapon,
+        player_character.attributes,
+        player_character.character,
+    );
+
+    combat.attack();
 
     Ok(())
 }
