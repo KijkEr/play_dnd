@@ -1,5 +1,5 @@
 use dotenv::dotenv;
-use play_dnd::{Combat, DBApplication};
+use play_dnd::DBApplication;
 
 #[tokio::main]
 async fn main() -> Result<(), sqlx::Error> {
