@@ -16,7 +16,7 @@ async fn main() -> Result<(), sqlx::Error> {
         player_character.attributes,
         player_character.character,
     );
-
+    println!("Je hebt een {}", combat.weapon.weapon_name);
     combat.attack();
 
     Ok(())

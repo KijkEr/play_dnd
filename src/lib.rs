@@ -14,6 +14,7 @@ pub struct Character {
     pub sub_class: String,
     pub proficiency: i16,
 }
+#[derive(Debug)]
 pub struct Weapon {
     pub weapon_name: String,
     pub weapon_type: String,

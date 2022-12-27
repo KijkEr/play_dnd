@@ -1,9 +1,9 @@
 use play_dnd::{roll_dice, Attributes, Character, Weapon};
 
 pub struct Combat {
-    weapon: Weapon,
-    attributes: Attributes,
-    character: Character,
+    pub weapon: Weapon,
+    pub attributes: Attributes,
+    pub character: Character,
 }
 
 impl Combat {
