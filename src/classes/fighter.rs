@@ -1,4 +1,4 @@
-use play_dnd;
+use play_dnd::{roll_dice, Attributes, Character, Weapon};
 
 pub struct Combat {
     weapon: Weapon,

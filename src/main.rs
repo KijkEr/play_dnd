@@ -1,6 +1,8 @@
 use dotenv::dotenv;
 use play_dnd::DBApplication;
 
+mod classes;
+
 #[tokio::main]
 async fn main() -> Result<(), sqlx::Error> {
     dotenv().ok();
@@ -9,7 +11,7 @@ async fn main() -> Result<(), sqlx::Error> {
 
     let player_character = db.build_character().await;
 
-    let combat = Combat::new(
+    let combat = classes::fighter::Combat::new(
         player_character.weapon,
         player_character.attributes,
         player_character.character,
