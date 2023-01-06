@@ -6,6 +6,7 @@ use sqlx::PgPool;
 pub struct DBApplication {
     pool: PgPool,
 }
+#[derive(Debug)]
 pub struct Character {
     pub character_name: String,
     pub level: i32,
@@ -25,6 +26,7 @@ pub struct Weapon {
     pub damage_type: String,
     pub quality: String,
 }
+#[derive(Debug)]
 pub struct Attributes {
     pub strength: f32,
     pub dexterity: f32,
@@ -33,6 +35,7 @@ pub struct Attributes {
     pub wisdom: f32,
     pub charisma: f32,
 }
+#[derive(Debug)]
 pub struct PlayerCharacter {
     pub character: Character,
     pub attributes: Attributes,

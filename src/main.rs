@@ -1,10 +1,12 @@
+#[macro_use]
+extern crate rocket;
 use dotenv::dotenv;
 use play_dnd::DBApplication;
 
 mod classes;
 
-#[tokio::main]
-async fn main() -> Result<(), sqlx::Error> {
+#[rocket::main]
+async fn main() -> Result<(), rocket::Error::PgDatabaseError> {
     dotenv().ok();
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let db = DBApplication::new(database_url).await?;
@@ -19,5 +21,20 @@ async fn main() -> Result<(), sqlx::Error> {
     println!("Je hebt een {}", combat.weapon.weapon_name);
     combat.attack();
 
+    rocket::build()
+        .mount("/", routes![character])
+        .manage(db)
+        .launch()
+        .await?;
+
     Ok(())
+}
+#[get("/")]
+async fn character() -> String {
+    dotenv().ok();
+    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let db = DBApplication::new(database_url).await.unwrap();
+
+    let player_character = db.build_character().await;
+    player_character.character.character_name
 }
