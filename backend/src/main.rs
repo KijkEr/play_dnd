@@ -1,12 +1,13 @@
 #[macro_use]
 extern crate rocket;
+use anyhow::Result;
 use dotenv::dotenv;
 use play_dnd::DBApplication;
 
 mod classes;
 
 #[rocket::main]
-async fn main() -> Result<(), rocket::Error::PgDatabaseError> {
+async fn main() -> Result<()> {
     dotenv().ok();
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let db = DBApplication::new(database_url).await?;
