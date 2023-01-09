@@ -1,4 +1,5 @@
 use rand::Rng;
+use serde::Serialize;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
 
@@ -6,7 +7,7 @@ use sqlx::PgPool;
 pub struct DBApplication {
     pool: PgPool,
 }
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Character {
     pub character_name: String,
     pub level: i32,

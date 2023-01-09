@@ -1,41 +1,37 @@
-#[macro_use]
-extern crate rocket;
-use anyhow::Result;
+use axum::{http::StatusCode, response::IntoResponse, routing::get, Json, Router};
 use dotenv::dotenv;
 use play_dnd::DBApplication;
+use std::net::SocketAddr;
+use tower_http::cors::{Any, CorsLayer};
 
-mod classes;
+#[tokio::main]
+async fn main() {
+    let cors = CorsLayer::new().allow_origin(Any);
 
-#[rocket::main]
-async fn main() -> Result<()> {
-    dotenv().ok();
-    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let db = DBApplication::new(database_url).await?;
+    let app = Router::new()
+        .route("/", get(root))
+        .route("/character", get(get_character))
+        .layer(cors);
 
-    let player_character = db.build_character().await;
+    let addr = SocketAddr::from(([127, 0, 0, 1], 8000));
+    println!("listening on {}", addr);
 
-    let combat = classes::fighter::Combat::new(
-        player_character.weapon,
-        player_character.attributes,
-        player_character.character,
-    );
-    println!("Je hebt een {}", combat.weapon.weapon_name);
-    combat.attack();
-
-    rocket::build()
-        .mount("/", routes![character])
-        .manage(db)
-        .launch()
-        .await?;
-
-    Ok(())
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
 }
-#[get("/")]
-async fn character() -> String {
+
+async fn root() -> &'static str {
+    "Hello, World!"
+}
+
+async fn get_character() -> impl IntoResponse {
     dotenv().ok();
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let db = DBApplication::new(database_url).await.unwrap();
 
     let player_character = db.build_character().await;
-    player_character.character.character_name
+
+    (StatusCode::OK, Json(player_character.character))
 }

@@ -8,7 +8,10 @@ edition = "2021"
 [dependencies]
 sqlx = { version = "0.6", features = [ "runtime-tokio-native-tls" , "postgres" ] }
 tokio = { version = "1", features = ["full"] }
+axum = "0.5.16"
+serde = { version = "1.0", features = ["derive"] }
+tower-http = { version = "0.3.4", features = ["cors"] }
+serde_json = "1.0.68"
 dotenv = "0.15.0"
 rand = "0.8.5"
-rocket = "0.5.0-rc.2"
 anyhow = "1.0.68"
