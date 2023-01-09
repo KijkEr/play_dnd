@@ -36,3 +36,30 @@
     transform: rotate(360deg);
   }
 }
+
+html body {
+  background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/45544/background-svg.svg)
+    no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.spacer {
+}
+
+.top-spacer {
+  margin-top: 200px;
+}
+
+.content-container {
+  padding: 10px;
+  background-color: rgb(255, 132, 240);
+  background: transparent;
+}
+
+.myBackground {
+  background-color: rgba(255, 255, 255, 0.7);
+  color: inherit;
+}
