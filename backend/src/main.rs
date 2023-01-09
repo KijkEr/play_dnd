@@ -35,3 +35,13 @@ async fn get_character() -> impl IntoResponse {
 
     (StatusCode::OK, Json(player_character.character))
 }
+
+async fn roll_dice() -> impl IntoResponse {
+    dotenv().ok();
+    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let db = DBApplication::new(database_url).await.unwrap();
+
+    let player_character = db.build_character().await;
+
+    (StatusCode::OK, Json(player_character.character))
+}
