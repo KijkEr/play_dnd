@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
+
 function App() {
   const [data, setData] = useState([]);
 
@@ -20,6 +21,18 @@ function App() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const [roll, setRoll] = useState([]);
+
+  const fetchRoll = () => {
+    fetch('http://localhost:8000/roll_dice', { method: 'GET' })
+      .then(response => response.json())
+      .then(actualRoll => {
+        setRoll(actualRoll);
+      });
+  };
+
+
 
   return (
     <div className="App">
@@ -41,6 +54,11 @@ function App() {
           <td>{data.proficiency}</td>
         </tr>
       </tbody>
+      <div>
+        <button onClick={fetchRoll}>Roll Dice</button>
+        <h1>Roll:</h1>
+        <h1>{roll.total}</h1>
+      </div>
     </div>
   );
 }

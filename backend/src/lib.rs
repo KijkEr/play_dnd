@@ -42,6 +42,10 @@ pub struct PlayerCharacter {
     pub attributes: Attributes,
     pub weapon: Weapon,
 }
+#[derive(Debug, Serialize)]
+pub struct Dice {
+    pub total: i16,
+}
 
 impl DBApplication {
     pub async fn new(config: String) -> Result<DBApplication, sqlx::Error> {
@@ -87,17 +91,19 @@ impl DBApplication {
     }
 }
 
-pub fn roll_dice(die_type: i16, die_amount: i16) -> i16 {
-    let mut rng = rand::thread_rng();
-    let mut total: i16 = 0;
+impl Dice {
+    pub fn roll_dice(die_type: i16, die_amount: i16) -> Dice {
+        let mut rng = rand::thread_rng();
+        let mut total: i16 = 0;
 
-    println!("Je gooit {die_amount} keer een d{die_type}");
+        println!("Je gooit {} keer een d{}", die_amount, die_type);
 
-    for _n in 1..=die_amount {
-        let roll = rng.gen_range(1..die_type);
-        total = total + roll;
-        println!("Eerste rol is {roll}");
+        for _n in 1..=die_amount {
+            let roll = rng.gen_range(1..die_type);
+            total = total + roll;
+            println!("Eerste rol is {roll}");
+        }
+        println!("Totale rol is {total}");
+        Dice { total: total }
     }
-    println!("Totale rol is {total}");
-    total
 }

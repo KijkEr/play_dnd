@@ -1,6 +1,6 @@
 use axum::{http::StatusCode, response::IntoResponse, routing::get, Json, Router};
 use dotenv::dotenv;
-use play_dnd::DBApplication;
+use play_dnd::{DBApplication, Dice};
 use std::net::SocketAddr;
 use tower_http::cors::{Any, CorsLayer};
 
@@ -11,6 +11,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(root))
         .route("/character", get(get_character))
+        .route("/roll_dice", get(roll_dice_api))
         .layer(cors);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8000));
@@ -36,12 +37,7 @@ async fn get_character() -> impl IntoResponse {
     (StatusCode::OK, Json(player_character.character))
 }
 
-async fn roll_dice() -> impl IntoResponse {
-    dotenv().ok();
-    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let db = DBApplication::new(database_url).await.unwrap();
-
-    let player_character = db.build_character().await;
-
-    (StatusCode::OK, Json(player_character.character))
+async fn roll_dice_api() -> impl IntoResponse {
+    let outcome: Dice = Dice::roll_dice(10, 2);
+    (StatusCode::OK, Json(outcome))
 }
