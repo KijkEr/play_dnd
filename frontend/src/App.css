@@ -38,7 +38,7 @@
 }
 
 html body {
-  background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/45544/background-svg.svg)
+  background: url("../media/pexels-pixabay-235985.jpg")
     no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -62,4 +62,8 @@ html body {
 .myBackground {
   background-color: rgba(255, 255, 255, 0.7);
   color: inherit;
+}
+
+.mid-spacer {
+  margin-top: 100px;
 }
