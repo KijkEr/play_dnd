@@ -7,3 +7,5 @@ select
     "proficiency" as "proficiency!"
 from
     "v_characters"
+where
+    character_name = $1

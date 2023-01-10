@@ -5,21 +5,26 @@ function App() {
   const [data, setData] = useState([]);
 
   const fetchData = () => {
-    fetch(`http://localhost:8000/character`)
+    fetch("http://localhost:8000/character", {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        body: JSON.stringify({ message: "Hello World!" }),
+      },
+    })
       .then((response) => response.json())
       .then((actualData) => {
         setData(actualData);
         console.log(data);
-        console.log(Object.keys(data[0]));
       })
       .catch((err) => {
         console.log(err.message);
       });
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
   const [roll, setRoll] = useState([]);
 
@@ -40,6 +45,9 @@ function App() {
       </div>
 
       <div className="row align-items-center">
+        <div className="col-4">
+          <button onClick={fetchData}>Get Character</button>
+        </div>
         <div className="col-3">
           <div className="spacer"></div>
         </div>

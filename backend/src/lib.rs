@@ -36,6 +36,7 @@ pub struct Attributes {
     pub wisdom: f32,
     pub charisma: f32,
 }
+
 #[derive(Debug)]
 pub struct PlayerCharacter {
     pub character: Character,
@@ -55,9 +56,9 @@ impl DBApplication {
             .await?;
         Ok(DBApplication { pool })
     }
-    async fn get_character(&self) -> Result<Character, sqlx::Error> {
+    async fn get_character(&self, character_name: String) -> Result<Character, sqlx::Error> {
         let mut transaction = self.pool.begin().await?;
-        let character = sqlx::query_file_as!(Character, "./queries/character.sql")
+        let character = sqlx::query_file_as!(Character, "./queries/character.sql", character_name)
             .fetch_one(&mut transaction)
             .await?;
         transaction.commit().await?;
@@ -79,8 +80,9 @@ impl DBApplication {
         transaction.commit().await?;
         Ok(attributes)
     }
-    pub async fn build_character(&self) -> PlayerCharacter {
-        let player = self.get_character().await;
+
+    pub async fn build_character(&self, character_name: String) -> PlayerCharacter {
+        let player = self.get_character(character_name).await;
         let weapon = self.get_weapon().await;
         let attributes = self.get_attributes().await;
         PlayerCharacter {

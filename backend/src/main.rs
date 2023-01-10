@@ -1,3 +1,4 @@
+use axum::extract::Path;
 use axum::{http::StatusCode, response::IntoResponse, routing::get, Json, Router};
 use dotenv::dotenv;
 use play_dnd::{DBApplication, Dice};
@@ -27,12 +28,12 @@ async fn root() -> &'static str {
     "Hello, World!"
 }
 
-async fn get_character() -> impl IntoResponse {
+async fn get_character(Path(character_name): Path<String>) -> impl IntoResponse {
     dotenv().ok();
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let db = DBApplication::new(database_url).await.unwrap();
 
-    let player_character = db.build_character().await;
+    let player_character = db.build_character(character_name).await;
 
     (StatusCode::OK, Json(player_character.character))
 }
