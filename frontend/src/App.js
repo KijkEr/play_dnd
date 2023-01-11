@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./App.css";
 
 function App() {
   const [data, setData] = useState([]);
 
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ character_name: "Brando" }),
+  };
+
   const fetchData = () => {
-    fetch("http://localhost:8000/character", {
-      method: "POST",
-      headers: {
-        accept: "application/json",
-        body: JSON.stringify({ message: "Hello World!" }),
-      },
-    })
+    fetch("http://localhost:8000/character", requestOptions)
       .then((response) => response.json())
       .then((actualData) => {
         setData(actualData);
@@ -37,52 +37,46 @@ function App() {
   };
 
   return (
-    <div className="container">
-      <div className="row align-items-start">
-        <div className="col-12">
-          <div className="top-spacer"></div>
-        </div>
+    <div>
+      <div>
+        <form>
+          <label>
+            Character Name:
+            <input type="text" name="name" />
+          </label>
+          <input type="submit" name="character" onClick={fetchData()} />
+        </form>
       </div>
-
-      <div className="row align-items-center">
-        <div className="col-4">
-          <button onClick={fetchData}>Get Character</button>
-        </div>
-        <div className="col-3">
-          <div className="spacer"></div>
-        </div>
-
-        <div className="col-6">
-          <div className="myBackground table-responsive">
-            <table className="table">
-              <thead className="thead-dark">
-                <tr>
-                  <th>Name</th>
-                  <th>Level</th>
-                  <th>Race</th>
-                  <th>Class</th>
-                  <th>Sub Class</th>
-                  <th>Proficiency</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{data.character_name}</td>
-                  <td>{data.level}</td>
-                  <td>{data.race}</td>
-                  <td>{data.class}</td>
-                  <td>{data.sub_class}</td>
-                  <td>{data.proficiency}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div className="mid-spacer"></div>
-          <div className="text-center">
-            <button onClick={fetchRoll}>Roll Dice</button>
-            <p className="font-weight-bold">Roll: {roll.total}</p>
-          </div>
-        </div>
+      <div>
+        <button onClick={fetchData}>Get Character</button>
+      </div>
+      <div>
+        <table className="table">
+          <thead className="thead-dark">
+            <tr>
+              <th>Name</th>
+              <th>Level</th>
+              <th>Race</th>
+              <th>Class</th>
+              <th>Sub Class</th>
+              <th>Proficiency</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{data.character_name}</td>
+              <td>{data.level}</td>
+              <td>{data.race}</td>
+              <td>{data.class}</td>
+              <td>{data.sub_class}</td>
+              <td>{data.proficiency}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div className="text-center">
+        <button onClick={fetchRoll}>Roll Dice</button>
+        <p className="font-weight-bold">Roll: {roll.total}</p>
       </div>
     </div>
   );
