@@ -1,15 +1,18 @@
 use axum::{
-    extract,
+    extract::State,
     http::StatusCode,
     response::IntoResponse,
     routing::{get, post},
     Json, Router,
 };
 use dotenv::dotenv;
-use play_dnd::{DBApplication, Dice};
+use play_dnd::{build_character, Dice};
 use serde::Deserialize;
-use std::net::SocketAddr;
+use sqlx::postgres::PgPoolOptions;
+use sqlx::PgPool;
+use std::{net::SocketAddr, time::Duration};
 use tower_http::cors::{Any, CorsLayer};
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[derive(Deserialize)]
 struct Qwe {
@@ -19,16 +22,34 @@ struct Qwe {
 #[tokio::main]
 async fn main() {
     let cors = CorsLayer::new().allow_origin(Any);
+    dotenv().ok();
+    tracing_subscriber::registry()
+        .with(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| "play_dnd=debug".into()),
+        )
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+
+    let db_connection_str = std::env::var("DATABASE_URL")
+        .unwrap_or_else(|_| "postgres://postgres:password@localhost".to_string());
+
+    let pool = PgPoolOptions::new()
+        .max_connections(5)
+        .acquire_timeout(Duration::from_secs(3))
+        .connect(&db_connection_str)
+        .await
+        .expect("can't connect to database");
 
     let app = Router::new()
         .route("/", get(root))
         .route("/character", post(get_character))
         .route("/roll_dice", get(roll_dice_api))
-        .layer(cors);
+        .layer(cors)
+        .with_state(pool);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8000));
-    println!("listening on {}", addr);
-
+    tracing::debug!("listening on {}", addr);
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
@@ -39,13 +60,12 @@ async fn root() -> &'static str {
     "Hello, World!"
 }
 
-async fn get_character(axum::extract::Json(test): extract::Json<Qwe>) -> impl IntoResponse {
-    dotenv().ok();
-    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let db = DBApplication::new(database_url).await.unwrap();
-
-    let player_character = db.build_character(test.character_name).await;
-
+async fn get_character(
+    State(pool): State<PgPool>,
+    axum::extract::Json(test): Json<Qwe>,
+) -> impl IntoResponse {
+    let player_character = build_character(State(pool), test.character_name).await;
+    tracing::debug!("{:?}", player_character);
     (StatusCode::OK, Json(player_character.character))
 }
 

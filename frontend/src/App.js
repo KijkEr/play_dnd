@@ -44,7 +44,7 @@ function App() {
             Character Name:
             <input type="text" name="name" />
           </label>
-          <input type="submit" name="character" onClick={fetchData()} />
+          <input type="submit" name="character" onClick={fetchData} />
         </form>
       </div>
       <div>

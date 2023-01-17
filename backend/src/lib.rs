@@ -1,12 +1,8 @@
+use axum::extract::State;
 use rand::Rng;
 use serde::Serialize;
-use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
 
-#[derive(Clone)]
-pub struct DBApplication {
-    pool: PgPool,
-}
 #[derive(Debug, Serialize)]
 pub struct Character {
     pub character_name: String,
@@ -48,51 +44,6 @@ pub struct Dice {
     pub total: i16,
 }
 
-impl DBApplication {
-    pub async fn new(config: String) -> Result<DBApplication, sqlx::Error> {
-        let pool = PgPoolOptions::new()
-            .max_connections(5)
-            .connect(&config)
-            .await?;
-        Ok(DBApplication { pool })
-    }
-    async fn get_character(&self, character_name: String) -> Result<Character, sqlx::Error> {
-        let mut transaction = self.pool.begin().await?;
-        let character = sqlx::query_file_as!(Character, "./queries/character.sql", character_name)
-            .fetch_one(&mut transaction)
-            .await?;
-        transaction.commit().await?;
-        Ok(character)
-    }
-    async fn get_weapon(&self) -> Result<Weapon, sqlx::Error> {
-        let mut transaction = self.pool.begin().await?;
-        let weapon = sqlx::query_file_as!(Weapon, "./queries/weapon.sql")
-            .fetch_one(&mut transaction)
-            .await?;
-        transaction.commit().await?;
-        Ok(weapon)
-    }
-    async fn get_attributes(&self) -> Result<Attributes, sqlx::Error> {
-        let mut transaction = self.pool.begin().await?;
-        let attributes = sqlx::query_file_as!(Attributes, "./queries/attributes.sql")
-            .fetch_one(&mut transaction)
-            .await?;
-        transaction.commit().await?;
-        Ok(attributes)
-    }
-
-    pub async fn build_character(&self, character_name: String) -> PlayerCharacter {
-        let player = self.get_character(character_name).await;
-        let weapon = self.get_weapon().await;
-        let attributes = self.get_attributes().await;
-        PlayerCharacter {
-            character: player.unwrap(),
-            attributes: attributes.unwrap(),
-            weapon: weapon.unwrap(),
-        }
-    }
-}
-
 impl Dice {
     pub fn roll_dice(die_type: i16, die_amount: i16) -> Dice {
         let mut rng = rand::thread_rng();
@@ -107,5 +58,43 @@ impl Dice {
         }
         println!("Totale rol is {total}");
         Dice { total: total }
+    }
+}
+
+async fn get_character_db(
+    State(pool): State<PgPool>,
+    character_name: String,
+) -> Result<Character, sqlx::Error> {
+    let character = sqlx::query_file_as!(Character, "./queries/character.sql", character_name)
+        .fetch_one(&pool)
+        .await?;
+    Ok(character)
+}
+
+async fn get_weapon(State(pool): State<PgPool>) -> Result<Weapon, sqlx::Error> {
+    let weapon = sqlx::query_file_as!(Weapon, "./queries/weapon.sql")
+        .fetch_one(&pool)
+        .await?;
+    Ok(weapon)
+}
+async fn get_attributes(State(pool): State<PgPool>) -> Result<Attributes, sqlx::Error> {
+    let attributes = sqlx::query_file_as!(Attributes, "./queries/attributes.sql")
+        .fetch_one(&pool)
+        .await?;
+    Ok(attributes)
+}
+
+pub async fn build_character(
+    State(pool): State<PgPool>,
+    character_name: String,
+) -> PlayerCharacter {
+    let pool = State(pool);
+    let player = get_character_db(pool.clone(), character_name).await;
+    let weapon = get_weapon(pool.clone()).await;
+    let attributes = get_attributes(pool.clone()).await;
+    PlayerCharacter {
+        character: player.unwrap(),
+        attributes: attributes.unwrap(),
+        weapon: weapon.unwrap(),
     }
 }
