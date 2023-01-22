@@ -37,14 +37,13 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="container">
       <div>
         <form>
           <label>
             Character Name:
             <input type="text" name="name" />
           </label>
-          <input type="submit" name="character" onClick={fetchData} />
         </form>
       </div>
       <div>

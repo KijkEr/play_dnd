@@ -1,3 +1,4 @@
+use crate::character::character::build_character;
 use axum::{
     extract::State,
     http::StatusCode,
@@ -6,7 +7,7 @@ use axum::{
     Json, Router,
 };
 use dotenv::dotenv;
-use play_dnd::{build_character, Dice};
+use play_dnd::Dice;
 use serde::Deserialize;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
@@ -14,8 +15,10 @@ use std::{net::SocketAddr, time::Duration};
 use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
+mod character;
+
 #[derive(Deserialize)]
-struct Qwe {
+struct CharacterInput {
     character_name: String,
 }
 
@@ -62,10 +65,9 @@ async fn root() -> &'static str {
 
 async fn get_character(
     State(pool): State<PgPool>,
-    axum::extract::Json(test): Json<Qwe>,
+    axum::extract::Json(test): Json<CharacterInput>,
 ) -> impl IntoResponse {
     let player_character = build_character(State(pool), test.character_name).await;
-    tracing::debug!("{:?}", player_character);
     (StatusCode::OK, Json(player_character.character))
 }
 
