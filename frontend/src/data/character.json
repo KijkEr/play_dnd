@@ -1,10 +1,32 @@
 [
     {
-        "character_name": "Brando",
-        "class": "Fighter",
-        "level": "10",
-        "proficiency": "4",
-        "race": "Variant Human",
-        "sub_class": "Battlemaster"
+        "character": [
+            {
+                "character_name": "Brando",
+                "class": "Fighter",
+                "level": "10",
+                "proficiency": "4",
+                "race": "Variant Human",
+                "sub_class": "Battlemaster"
+            }
+        ],
+        "attributes": {
+            "strength": "20",
+            "dexterity": "12",
+            "constitution": "20",
+            "intelligence": "8",
+            "wisdom": "13",
+            "charisma": "8"
+        },
+        "weapon": {
+            "weapon_name": "Glaive +1",
+            "weapon_type": "Glaive",
+            "attack_type": "Melee",
+            "reach": "10 ft",
+            "dice_amount": "1",
+            "die_type": "d10",
+            "damage_type": "Slashing",
+            "quality": "Uncommon"
+        }
     }
 ]
