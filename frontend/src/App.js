@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 
-function App() {
+function GetCharacter() {
   const [data, setData] = useState([]);
 
   const requestOptions = {
@@ -21,10 +21,6 @@ function App() {
         console.log(err.message);
       });
   };
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
 
   const [roll, setRoll] = useState([]);
 
@@ -81,4 +77,4 @@ function App() {
   );
 }
 
-export default App;
+export default GetCharacter;

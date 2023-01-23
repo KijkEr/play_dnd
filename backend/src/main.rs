@@ -65,10 +65,10 @@ async fn root() -> &'static str {
 
 async fn get_character(
     State(pool): State<PgPool>,
-    axum::extract::Json(test): Json<CharacterInput>,
+    axum::extract::Json(character): Json<CharacterInput>,
 ) -> impl IntoResponse {
-    let player_character = build_character(State(pool), test.character_name).await;
-    (StatusCode::OK, Json(player_character.character))
+    let player_character = build_character(State(pool), character.character_name).await;
+    (StatusCode::OK, Json(player_character))
 }
 
 async fn roll_dice_api() -> impl IntoResponse {

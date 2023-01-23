@@ -11,7 +11,7 @@ pub struct Character {
     pub proficiency: i16,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Attributes {
     pub strength: f32,
     pub dexterity: f32,
@@ -21,7 +21,7 @@ pub struct Attributes {
     pub charisma: f32,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Weapon {
     pub weapon_name: String,
     pub weapon_type: String,
@@ -33,7 +33,7 @@ pub struct Weapon {
     pub quality: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct PlayerCharacter {
     pub character: Character,
     pub attributes: Attributes,
