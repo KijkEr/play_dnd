@@ -1,17 +1,40 @@
 import Table from "./character/character";
-import data from "./data/character.json";
+import { useState, useEffect } from "react";
 
 function App() {
-  const getHeadings = () => {
-    return Object.keys(data[0].character[0]);
+  const [data, setData] = useState([]);
+
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ character_name: "Brando" }),
   };
 
-  console.log(getHeadings());
-  console.log(data[0].character);
+  const fetchData = () => {
+    fetch("http://localhost:8000/character", requestOptions)
+      .then((response) => response.json())
+      .then((actualData) => {
+        setData(actualData);
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
+
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+
+  const getHeadings = () => {
+    console.log(data);
+    return Object.keys(data.character);
+  };
 
   return (
     <div className="container">
-      <Table theadData={getHeadings()} tbodyData={data[0].character} />
+      <button onClick={fetchData}>Get Character</button>
+      {/* <Table theadData={getHeadings()} tbodyData={data[0].character} /> */}
     </div>
   );
 }
