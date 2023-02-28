@@ -4,7 +4,7 @@ use sqlx::PgPool;
 #[derive(Debug, Serialize)]
 pub struct Character {
     pub character_name: String,
-    pub level: i32,
+    pub level: i16,
     pub race: String,
     pub class: String,
     pub sub_class: String,
