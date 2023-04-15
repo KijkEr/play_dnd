@@ -24,7 +24,7 @@ struct CharacterInput {
 
 #[tokio::main]
 async fn main() {
-    let cors = CorsLayer::new().allow_origin(Any);
+    let cors = CorsLayer::new().allow_origin(Any).allow_headers(Any);
     dotenv().ok();
     tracing_subscriber::registry()
         .with(
@@ -68,6 +68,7 @@ async fn get_character(
     axum::extract::Json(character): Json<CharacterInput>,
 ) -> impl IntoResponse {
     let player_character = build_character(State(pool), character.character_name).await;
+    println!("{:?}", player_character);
     (StatusCode::OK, Json(player_character))
 }
 

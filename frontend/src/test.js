@@ -1,5 +1,5 @@
-import Table from "./character/character";
 import { useState, useEffect } from "react";
+import Table from "./character/character";
 
 function App() {
   const [data, setData] = useState([]);
@@ -16,15 +16,12 @@ function App() {
       .then((actualData) => {
         setData(actualData);
         console.log(data);
+        console.log(Object.keys(data.character));
       })
       .catch((err) => {
         console.log(err.message);
       });
   };
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
 
   const getHeadings = () => {
     console.log(data);
@@ -34,7 +31,7 @@ function App() {
   return (
     <div className="container">
       <button onClick={fetchData}>Get Character</button>
-      {/* <Table theadData={getHeadings()} tbodyData={data[0].character} /> */}
+      {/* <Table theadData={getHeadings()} tbodyData={data.character} /> */}
     </div>
   );
 }
